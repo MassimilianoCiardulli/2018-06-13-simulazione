@@ -15,7 +15,7 @@ public class Flight {
 	private int arrivalDelay;
 	private int airTime;
 	private int distance;
-	
+
 	public Flight(int id, String airlineId, int flightNumber, String originAirportId, String destinationAirportId,
 			LocalDateTime scheduledDepartureDate, LocalDateTime arrivalDate, int departureDelay, int arrivalDelay,
 			int airTime, int distance) {
@@ -148,4 +148,72 @@ public class Flight {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + airTime;
+		result = prime * result + ((airlineId == null) ? 0 : airlineId.hashCode());
+		result = prime * result + ((arrivalDate == null) ? 0 : arrivalDate.hashCode());
+		result = prime * result + arrivalDelay;
+		result = prime * result + departureDelay;
+		result = prime * result + ((destinationAirportId == null) ? 0 : destinationAirportId.hashCode());
+		result = prime * result + distance;
+		result = prime * result + flightNumber;
+		result = prime * result + id;
+		result = prime * result + ((originAirportId == null) ? 0 : originAirportId.hashCode());
+		result = prime * result + ((scheduledDepartureDate == null) ? 0 : scheduledDepartureDate.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Flight other = (Flight) obj;
+		if (airTime != other.airTime)
+			return false;
+		if (airlineId == null) {
+			if (other.airlineId != null)
+				return false;
+		} else if (!airlineId.equals(other.airlineId))
+			return false;
+		if (arrivalDate == null) {
+			if (other.arrivalDate != null)
+				return false;
+		} else if (!arrivalDate.equals(other.arrivalDate))
+			return false;
+		if (arrivalDelay != other.arrivalDelay)
+			return false;
+		if (departureDelay != other.departureDelay)
+			return false;
+		if (destinationAirportId == null) {
+			if (other.destinationAirportId != null)
+				return false;
+		} else if (!destinationAirportId.equals(other.destinationAirportId))
+			return false;
+		if (distance != other.distance)
+			return false;
+		if (flightNumber != other.flightNumber)
+			return false;
+		if (id != other.id)
+			return false;
+		if (originAirportId == null) {
+			if (other.originAirportId != null)
+				return false;
+		} else if (!originAirportId.equals(other.originAirportId))
+			return false;
+		if (scheduledDepartureDate == null) {
+			if (other.scheduledDepartureDate != null)
+				return false;
+		} else if (!scheduledDepartureDate.equals(other.scheduledDepartureDate))
+			return false;
+		return true;
+	}
+
 }

@@ -1,9 +1,14 @@
 package it.polito.tdp.flightdelays;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.flightdelays.model.Airline;
+import it.polito.tdp.flightdelays.model.Airport;
 import it.polito.tdp.flightdelays.model.Model;
+import it.polito.tdp.flightdelays.model.PairAirportsCount;
+import it.polito.tdp.flightdelays.model.Passeggero;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,7 +28,7 @@ public class FlightDelaysController {
     private TextArea txtResult;
 
     @FXML
-    private ComboBox<?> cmbBoxLineaAerea;
+    private ComboBox<Airline> cmbBoxLineaAerea;
 
     @FXML
     private Button caricaVoliBtn;
@@ -33,15 +38,47 @@ public class FlightDelaysController {
 
     @FXML
     private TextField numeroVoliTxtInput;
-
+    
+    private Model model ;
+    
     @FXML
     void doCaricaVoli(ActionEvent event) {
-    		System.out.println("Carica voli!");
+    	Airline airline = this.cmbBoxLineaAerea.getValue() ;
+    	if(airline == null) {
+    		this.txtResult.appendText("ERRORE: selezionare una linea aerea.\n");
+    		return ;
+    	}
+    	model.createGraph(airline) ;
+    	List<PairAirportsCount> worse = model.getWorst10();
+    	if(worse.isEmpty() || worse == null) {
+    		this.txtResult.appendText("ERROR\n");
+    		return ;
+    	}
+    	for(PairAirportsCount pac : worse) {
+    		this.txtResult.appendText(pac + "\n");
+    	}
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-    		System.out.println("Simula!");
+    	try {
+    		int K = Integer.parseInt(this.numeroPasseggeriTxtInput.getText());
+    		int V = Integer.parseInt(this.numeroVoliTxtInput.getText());
+    		Airline airline = this.cmbBoxLineaAerea.getValue() ;
+        	if(airline == null) {
+        		this.txtResult.appendText("ERRORE: selezionare una linea aerea.\n");
+        		return ;
+        	}
+    		List<Passeggero> delays = model.simula(K,V,airline) ;
+    		if(delays!=null) {
+    			this.txtResult.appendText("RITARDI ACCUMULATI DAI PASSEGGERI DURANTE LA SIMULAZIONE:\n");
+    			for(Passeggero p : delays)
+    				this.txtResult.appendText("Passeggero "+ (p.getIdPasseggero()+1) + " delay = "+p.getRitardo()+" minuti\n");
+    		}
+    		
+    	} catch(NumberFormatException e) {
+    		this.txtResult.appendText("Inserire un numero di passeggero o di voli validi.\n");
+    	}
     }
 
     @FXML
@@ -55,6 +92,9 @@ public class FlightDelaysController {
     }
     
 	public void setModel(Model model) {
-		// TODO Auto-generated method stub
+		this.model = model ;
+		for(Airline a : model.getAirlines()) {
+			this.cmbBoxLineaAerea.getItems().add(a);
+		}
 	}
 }
